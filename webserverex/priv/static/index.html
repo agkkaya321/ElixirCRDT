@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Key Store</title>
+  </head>
+  <body>
+    <!-- Conteneur principal -->
+    <div id="container">
+      <h1>Key Store</h1>
+
+      <!-- Conteneur pour aligner les éléments -->
+      <div
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 20px;
+        "
+      >
+        <!-- Liste déroulante -->
+        <select
+          id="item-select"
+          style="margin-right: 20px; padding: 10px; font-size: 16px"
+        >
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+        </select>
+
+        <!-- Boutons + et - -->
+        <div style="margin-right: 20px">
+          <button id="plus-btn" style="padding: 10px 15px; font-size: 16px">
+            +
+          </button>
+          <button id="minus-btn" style="padding: 10px 15px; font-size: 16px">
+            -
+          </button>
+        </div>
+
+        <!-- Zone de texte -->
+        <input
+          id="number-input"
+          type="number"
+          placeholder="0"
+          style="padding: 10px; width: 120px; font-size: 16px"
+          min="0"
+        />
+      </div>
+
+      <!-- Bouton Enter -->
+      <div style="margin-top: 30px">
+        <button id="enter-btn" style="padding: 15px 30px; font-size: 18px">
+          Enter
+        </button>
+      </div>
+    </div>
+
+    <!-- Style -->
+    <style>
+      /* Style global */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: black; /* Fond noir */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333; /* Couleur du texte*/
+      }
+
+      /* Conteneur central */
+      #container {
+        background-color: white; /* Fond blanc */
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Ombre pour l'effet esthétique */
+        text-align: center;
+        width: 400px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #111;
+      }
+
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      button.active#plus-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      button.active#minus-btn {
+        background-color: red;
+        color: white;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      input,
+      select {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #4caf50;
+      }
+    </style>
+
+    <!-- Script JS -->
+    <script>
+      const plusBtn = document.getElementById("plus-btn");
+      const minusBtn = document.getElementById("minus-btn");
+      const numberInput = document.getElementById("number-input");
+
+      // Gère l'état actif des boutons
+      plusBtn.addEventListener("click", () => {
+        plusBtn.classList.add("active");
+        minusBtn.classList.remove("active");
+      });
+
+      minusBtn.addEventListener("click", () => {
+        minusBtn.classList.add("active");
+        plusBtn.classList.remove("active");
+      });
+
+      // Empêche les nombres négatifs dans le champ de saisie
+      numberInput.addEventListener("input", () => {
+        if (numberInput.value < 0) {
+          numberInput.value = 0;
+        }
+      });
+
+      // Comportement du bouton Enter
+      const enterBtn = document.getElementById("enter-btn");
+      enterBtn.addEventListener("click", () => {
+        const selectedItem = document.getElementById("item-select").value;
+        const numberValue = numberInput.value;
+        const sign = plusBtn.classList.contains("active") ? "+" : "-";
+        sendInfo(selectedItem, numberValue, sign);
+      });
+
+      async function sendInfo(selectedItem, numberValue, sign) {
+        const url = "/message";
+        const payload = {
+          signe: sign,
+          number: numberValue,
+          product: selectedItem,
+        };
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error("Une erreur est survenue : " + response.statusText);
+          }
+
+          const data = await response.text();
+          console.log("Données reçues du serveur :", data);
+        } catch (error) {
+          console.error("Erreur :", error);
+        }
+      }
+    </script>
+  </body>
+</html>
