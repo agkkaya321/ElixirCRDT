@@ -73,12 +73,11 @@ Le module `Webserverex.Application` démarre un serveur web qui permet aux utili
 
 ### Étapes
 
-1. **Cloner le dépôt**
-
    ```bash
    git clone https://github.com/votre-utilisateur/votre-projet.git
    cd votre-projet
    mix deps.get
+  elixirc PNCounter.exs
    iex supervisor.exs
    iex worker.exs
    mix run --no-halt
